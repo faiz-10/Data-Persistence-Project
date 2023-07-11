@@ -9,10 +9,11 @@ public class MainManager : MonoBehaviour
     public Brick BrickPrefab;
     public int LineCount = 6;
     public Rigidbody Ball;
-
+    public Text BestScore;
     public Text ScoreText;
+    private MenuUIManager menuUIManager;
     public GameObject GameOverText;
-    
+    private int highestScore;
     private bool m_Started = false;
     private int m_Points;
     
@@ -36,6 +37,8 @@ public class MainManager : MonoBehaviour
                 brick.onDestroyed.AddListener(AddPoint);
             }
         }
+        DataPersist.instance.LoadData();
+        BestScore.text = "Best Score : " + DataPersist.instance.playerName + " : " + DataPersist.instance.highestScore;
     }
 
     private void Update()
@@ -70,7 +73,15 @@ public class MainManager : MonoBehaviour
 
     public void GameOver()
     {
+        
+        if (m_Points > DataPersist.instance.highestScore)
+        {
+            DataPersist.instance.highestScore = m_Points;
+            DataPersist.instance.playerName = DataPersist.instance.currentPlayer; 
+        }
         m_GameOver = true;
+        BestScore.text = "Best Score : " + DataPersist.instance.playerName + " : " + DataPersist.instance.highestScore;
         GameOverText.SetActive(true);
+        DataPersist.instance.SaveData();
     }
 }
